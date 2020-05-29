@@ -8,4 +8,6 @@ urlpatterns = [
     path('index',vi.index,name='index',kwargs={"arg":"world"}),
     path('<int:question_id>/', vi.detail, name='detail'),
     path('year/<yyyy:year_data>/',vi.year,name='year'),
+    path('photo/',vi.photo),
+    path('run/',vi.run),
 ]

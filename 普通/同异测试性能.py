@@ -16,18 +16,48 @@ import time
 import asyncio
 
 # 定义异步函数
+def t():
+    time.sleep(3)
+    print('世界，你好！')
+    return 3
 async def hello():
     print('Hello World:%s' % time.time())
-    #必须使用await，不能使用yield from；如果是使用yield from ，需要采用@asyncio.coroutine相对应
-    await asyncio.sleep(1)
-    print('Hello wow World:%s' % time.time())
 
 def run():
-    tasks = []
     for i in range(5):
-        tasks.append(hello())
-    loop.run_until_complete(asyncio.wait(tasks))
+        loop.run_until_complete(hello())
 
 loop = asyncio.get_event_loop()
 if __name__ =='__main__':
     run()
+
+
+# import time
+#
+# def hello():
+#     time.sleep(1)
+#
+# def run():
+#     for i in range(5):
+#         hello()
+#         print('Hello World:%s' % time.time())  # 任何伟大的代码都是从Hello World 开始的！
+# if __name__ == '__main__':
+#     run()
+
+# import asyncio
+# import time
+#
+# async def say_after(delay, what):
+#     await asyncio.sleep(delay)
+#     print(what)
+#
+# async def main():
+#     print(f"started at {time.strftime('%X')}")
+#
+#     await say_after(1, 'hello')
+#     await say_after(2, 'world')
+#
+#     print(f"finished at {time.strftime('%X')}")
+#
+# asyncio.run(main())
+

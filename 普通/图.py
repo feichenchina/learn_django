@@ -1,32 +1,6 @@
-import pymysql as pymysql
-from django.http import JsonResponse
-from django.shortcuts import render
-
-# Create your views here.
-def index(request,arg):
-    return render(request,'index.html')
-
-def detail(request,question_id):
-    return JsonResponse({"msg":"OK","arg":question_id})
-
-def year(request,year_data):
-    return JsonResponse({"msg":"OK","arg":year_data})
-from random import randrange
-from pyecharts.charts import Bar, HeatMap
 from pyecharts import options as opts
-import json
-def bar_base() -> Bar:
-    c = (
-        Bar()
-        .add_xaxis(["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"])
-        .add_yaxis("商家A", [randrange(0, 100) for _ in range(6)])
-        .add_yaxis("商家B", [randrange(0, 100) for _ in range(6)])
-        .set_global_opts(title_opts=opts.TitleOpts(title="Bar-基本示例", subtitle="我是副标题"))
-        .dump_options_with_quotes()
-    )
-    return c
-def heat_base() -> HeatMap:
-    dict = {
+from pyecharts.charts import HeatMap
+dict = {
   "code": 1,
   "msg": "格式:[[横坐标,纵坐标,次数],[横坐标,纵坐标,次数]......]",
   "data": [
@@ -34686,107 +34660,38 @@ def heat_base() -> HeatMap:
     "y_max": 109
   }
 }
-    value = dict['data']
-    x = [i for i in range(1, 63, 1)]
-    y = [i for i in range(1, 110, 1)]
-    c = (
-        HeatMap(init_opts=opts.InitOpts(width="2490px", height="720px"))
-            .add_xaxis(x,)
-            .add_yaxis(
-            series_name="",
-            yaxis_data=y,
-            value=value,
-            is_selected=True,
-            label_opts=opts.LabelOpts(is_show=False, position="inside",)
-        )
-            .set_global_opts(
-          brush_opts=opts.BrushOpts(
-            tool_box="polygon",
-            series_index="all",
-            throttle_delay=1,
-          ),
-            title_opts = opts.TitleOpts(
-              title = "演示",title_link='http://www.baidu.com',
-              subtitle="syn\n世界",
-              item_gap=20,
-              title_textstyle_opts={"color":"red"},
-
-            ),
-          tooltip_opts = opts.TooltipOpts(
-            trigger="item",
-            trigger_on="mousemove|click",
-            axis_pointer_type = "cross",
-            background_color="black",
-            border_color="yellow",
-            border_width=3
-          ),
-          # datazoom_opts=opts.DataZoomOpts(
-          #
-          # ),
-            visualmap_opts=opts.VisualMapOpts(pieces=[
-                {"max": 4, "color": "#27D8DC"},
-                {"max": 5, "color": "#F6E61F"},
-                {"max": 6, "color": "#F3BB5C"},
-                {"max": 7, "color": "#29E81F"},
-                {"max": 8, "color": "#27941F"},
-                {"max": 9, "color": "#F62B1F"},
-                {"max": 10, "color": "#B337AB"},
-                {"min": 10, "color": "#664AEE"},
-            ],
-                is_piecewise=True,
-                is_show=True,
-                orient="horizontal",
-                pos_left="center",
-            ),
-          xaxis_opts = opts.AxisOpts(interval=15,min_="dataMin",max_="dataMax",is_show = True,offset=20,position='bottom'),
-          yaxis_opts = opts.AxisOpts(min_="dataMin",max_="dataMax",interval=10,offset=25,position='left'),
-          legend_opts = {
-            "item_gap":20,
-            "is_show":False
-          },
-        )
-        .set_series_opts(
-          label_opts = opts.LabelOpts(
-            interval = 15
-          )
-        )
-            .dump_options_with_quotes()
+print(dict['data'])
+# value = [[i, j, random.randint(0, 50)] for i in range(24) for j in range(7)]
+value = dict['data']
+# print(value)
+x = [i for i in range(1,63,1)]
+y = [i for i in range(1,110,1)]
+c = (
+    HeatMap(init_opts=opts.InitOpts(width="2440px", height="720px"))
+    .add_xaxis(x)
+    .add_yaxis(
+        series_name = "",
+        yaxis_data = y,
+        value = value,
+        is_selected=True,
+        label_opts=opts.LabelOpts(is_show=False, position="inside"),
     )
-    return c
-
-def photo(request):
-    return JsonResponse(json.loads(heat_base()))
-
-
-
-import os,time
-from multiprocessing import Pool
-import pymysql
-connection = pymysql.connect(host='localhost', port=3307,user='root',passwd='123456',db='user',charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
-def worker(arg):
-    for i in range(2,6):
-      # print("子进程开始执行>>> pid={},ppid={},编号{}".format(os.getpid(),os.getppid(),arg))
-      time.sleep(3)
-      try:
-          cursor = connection.cursor()
-          # 创建sql 语句
-          sql = "insert into user(id,name,password) values('%s','%s','%s')"%(i,i,i)
-          # 执行sql语句
-          cursor.execute(sql)
-          # 获取所有记录列表
-          connection.commit()
-          # print("子进程终止>>> pid={},ppid={},编号{}".format(os.getpid(),os.getppid(),arg))
-      except Exception as e:
-        print(e)
-
-def run(request):
-  print("主进程开始执行>>> pid={}".format(os.getpid()))
-  ps=Pool(1)
-  for i in range(1):
-    # ps.apply(worker,args=(i,))     # 同步执行
-    ps.apply_async(worker,args=(i,)) # 异步执行
-  # 关闭进程池，停止接受其它进程
-  ps.close()
-  # 阻塞进程
-  # ps.join()
-  return JsonResponse({"msg":"success"})
+    .set_global_opts(
+        visualmap_opts=opts.VisualMapOpts(pieces=[
+            {"max": 4,"color":"#27D8DC"},
+            {"max": 5,"color":"#F6E61F"},
+            {"max": 6,"color":"#F3BB5C"},
+            {"max": 7,"color":"#29E81F"},
+            {"max": 8, "color":"#27941F"},
+            {"max": 9, "color":"#F62B1F"},
+            {"max": 10, "color":"#B337AB"},
+            {"min": 10, "color":"#664AEE"},
+          ],
+          is_piecewise = True,
+          is_show=True,
+          orient="horizontal",
+          pos_left="center",
+        ),
+    )
+    .render("heatmap_with_label_show.html")
+)
